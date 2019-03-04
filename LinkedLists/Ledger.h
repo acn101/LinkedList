@@ -8,11 +8,11 @@ using namespace std;
 
 struct Node
 {
-    int uniqueID;
-    string sender;
-    string receiver;
-    int amount;
-    Node* next;
+    int uniqueID; // Unique identifier for the current node.
+    string sender; // Tracks who sent money.
+    string receiver; // Tracks who received money.
+    int amount; // Tracks how much money was sent/received.
+    Node* next; // Tracks the next transaction.
 };
 
 class Ledger
