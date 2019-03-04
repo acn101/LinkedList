@@ -1,17 +1,30 @@
 #include "Ledger.h"
 
-// constructor
+/*
+ * The constructor method initializes the header (starting point) of the ledger (linked list).
+ * It also sets the beginning number for each node's unique id (arbitrary as long as it doesn't start on 0).
+ */
 Ledger::Ledger() {
+    // set header equal to a new node
     header = new Node;
+    // set the next value equal to null (empty linked list)
     header->next = NULL;
+    // set the starting point of the unique id
     newID = 100;
 }
 
-// destructor
+/*
+ * The decontructor removes all nodes and deletes the header.
+ */
 Ledger::~Ledger() {
-    // todo
+    Clear();
+    delete header;
 }
 
+/*
+ * AddExternalMoney creates a new node and populates it with a unique id, receiver, and amount.
+ * The header then points to the new node and the new node points to what the header was previous pointing to.
+ */
 int Ledger::AddExternalMoney(string r, int a) {
     // create a new node
     Node *newNode = new Node;
@@ -37,6 +50,10 @@ int Ledger::AddExternalMoney(string r, int a) {
     return newNode->uniqueID;
 }
 
+/*
+ * AddPayment creates a new node that tracks who is sending n amount of money and who is receiving that money.
+ * This data is saved in a new node with a unique id.
+ */
 int Ledger::AddPayment(string s, string r, int a) {
     // create a new node
     Node *newNode = new Node;
@@ -65,6 +82,10 @@ int Ledger::AddPayment(string s, string r, int a) {
     return newNode->uniqueID;
 }
 
+/*
+ * RefundPayment(int) searches for the unique id on the ledger and removes it.
+ * If the unique id isn't found on a node within the ledger, -1 is returned.
+ */
 int Ledger::RefundPayment(int uID) {
     // check that uID exists
     if (!checkID(uID))
@@ -95,6 +116,10 @@ int Ledger::RefundPayment(int uID) {
     return 1;
 }
 
+/*
+ * RefundPayment(string, string, int) searches for matching sender, receiver, and amount on the ledger and removes it.
+ * If all of the values aren't absolutely matching, -1 is returned.
+ */
 int Ledger::RefundPayment(string s, string r, int a) {
     // create a pointer
     Node *p = header;
@@ -110,6 +135,10 @@ int Ledger::RefundPayment(string s, string r, int a) {
     return -1;
 }
 
+/*
+ * Clear removes all nodes on the ledger.
+ * This does not delete the header.
+ */
 void Ledger::Clear() {
     while (!isEmpty()) {
         Node *node = findByIndex(0);
@@ -117,6 +146,9 @@ void Ledger::Clear() {
     }
 }
 
+/*
+ * Print the id, sender, receiver, and amount of each node to the console.
+ */
 void Ledger::Print() {
     // create pointer
     Node *p = header;
@@ -135,6 +167,9 @@ void Ledger::Print() {
     }
 }
 
+/*
+ * Print(string) only returns the id, sender, receiver, and amount of a node that contains a matching name.
+ */
 void Ledger::Print(string name) {
     // create pointer
     Node *p = header;
@@ -151,6 +186,9 @@ void Ledger::Print(string name) {
     }
 }
 
+/*
+ * Returns the name and total amount of each user who added to the ledger.
+ */
 void Ledger::Settle() {
     // create pointer
     Node *p = header;
@@ -184,6 +222,9 @@ void Ledger::Settle() {
     }
 }
 
+/*
+ * Prints a list of all users who have a positive total amount or 0 in their account.
+ */
 void Ledger::InTheBlack() {
     // create pointer
     Node *p = header;
@@ -219,6 +260,9 @@ void Ledger::InTheBlack() {
     }
 }
 
+/*
+ * Prints a list of all users who have a negative total amount in their account.
+ */
 void Ledger::InTheRed() {
     // create pointer
     Node *p = header;
@@ -255,20 +299,34 @@ void Ledger::InTheRed() {
 }
 
 // helper methods
+/*
+ * Checks if a name has already been used on a ledger.
+ * This is a flaw in the system because if there are 2 people named "alice", then the system would count that as 1 person.
+ */
 bool Ledger::checkName(string n) {
+    // go through the names array
     for (int i = 0; i < names.size(); i++) {
+        // if the name exists, return true
         if (names[i] == n) {
             return true;
         }
     }
+    // if not, return false
     return false;
 }
 
+/*
+ * Returns the previous node in the ledger (linked list)
+ */
 Node *Ledger::getPrevious(int uID) {
+    // create a pointer
     Node *p = header;
+    // check if the pointer's id is equal to the inputed id
+    // if the header is the position, return the header
     if (header->uniqueID == uID) {
         return p;
     } else {
+        // otherwise, check if the next node has equal unique ids and return the current pointer
         while (p->next->uniqueID != uID) {
             p = p->next;
         }
@@ -276,28 +334,44 @@ Node *Ledger::getPrevious(int uID) {
     }
 }
 
+/*
+ * Checks whether a unique id exists within the ledger (linked list).
+ */
 bool Ledger::checkID(int uID) {
+    // create a pointer
     Node *p = header;
+    // as long as the unique id of the nodes aren't equal, go to the next node
     while (p->uniqueID != 0) {
+        // if it finds equal ids, it returns true
         if (p->uniqueID == uID) {
             return true;
         }
         p = p->next;
     }
+    // otherwise return false
     return false;
 }
 
 bool Ledger::isEmpty() const {
+    // check if the header is empty (null)
     return header->next == NULL;
 }
 
+/*
+ * Finds a node by index.
+ */
 Node *Ledger::findByIndex(int index) const {
+    // if index isn't negative, return null
     if (index < 0)
         return NULL;
     
+    // create a pointer that looks at header
     Node *ptr = header;
+    // iterate as long as the pointer isn't null
     for (int i = 0; ptr != NULL; ptr = ptr->next, i++)
+        // break once the pointer reaches the index
         if (i == index)
             break;
+    // return the pointer
     return ptr;
 }
