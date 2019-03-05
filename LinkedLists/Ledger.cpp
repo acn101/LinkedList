@@ -140,6 +140,10 @@ int Ledger::RefundPayment(string s, string r, int a) {
  * This does not delete the header.
  */
 void Ledger::Clear() {
+    // clear the names vector
+    names.clear();
+    
+    // remove each node
     while (!isEmpty()) {
         Node *node = findByIndex(0);
         RefundPayment(node->uniqueID);
